@@ -1,5 +1,6 @@
 use Renard::Incunabula::Common::Setup;
 package Renard::Incunabula::Language::EN;
+# ABSTRACT: Natural language processing for English
 
 use Renard::Incunabula::Common::Types qw(InstanceOf);
 use Function::Parameters;
