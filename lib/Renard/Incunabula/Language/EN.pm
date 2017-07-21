@@ -18,9 +18,6 @@ of each sentence.
 
 =cut
 fun apply_sentence_offsets_to_blocks( (InstanceOf['String::Tagged']) $text ) {
-	# loading here so that utf8::all does not effect everything
-	require Lingua::EN::Sentence::Offsets;
-	Lingua::EN::Sentence::Offsets->import(qw/get_offsets add_acronyms/);
 	$text->iter_extents_nooverlap(
 		sub {
 			my ( $extent, %tags ) = @_;
@@ -38,6 +35,25 @@ fun apply_sentence_offsets_to_blocks( (InstanceOf['String::Tagged']) $text ) {
 		},
 		only => [ 'block' ],
 	);
+}
+
+fun get_offsets( $text ) {
+	# loading here so that utf8::all does not effect everything
+	require Lingua::EN::Sentence;
+	Lingua::EN::Sentence->import(qw/get_sentences/);
+
+	my $sentences = get_sentences($text);
+
+	my $offsets = [];
+	my $str = $text->str;
+	for my $s (@$sentences) {
+		my $s_re = $s =~ s/\s+/\\s+/gr;
+		$str =~ m/$s_re/g;
+		push @$offsets, [ $-[0], $+[0] ];
+
+	}
+
+	$offsets;
 }
 
 fun preprocess_for_tts( $text ) {
