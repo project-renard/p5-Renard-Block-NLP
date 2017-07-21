@@ -13,9 +13,6 @@ use Text::Unidecode;
 Retrieves the sentence offsets for each part of the C<$text> string that has
 been tagged as a C<block> and apply a C<sentence> tag to each sentence.
 
-This uses L<Lingua::EN::Sentence::Offsets> internally to determine the location
-of each sentence.
-
 =cut
 fun apply_sentence_offsets_to_blocks( (InstanceOf['String::Tagged']) $text ) {
 	$text->iter_extents_nooverlap(
@@ -37,6 +34,17 @@ fun apply_sentence_offsets_to_blocks( (InstanceOf['String::Tagged']) $text ) {
 	);
 }
 
+=func _get_offsets
+
+  fun _get_offsets( $text )
+
+This uses L<Lingua::EN::Sentence> internally to determine the location
+of each sentence.
+
+Returns an ArrayRef of ArrayRefs where the first item is the starting index and
+the second is the ending index of each sentence in C<$text>.
+
+=cut
 fun _get_offsets( $text ) {
 	# loading here so that utf8::all does not effect everything
 	require Lingua::EN::Sentence;
@@ -56,6 +64,16 @@ fun _get_offsets( $text ) {
 	$offsets;
 }
 
+=func preprocess_for_tts
+
+  fun preprocess_for_tts( $text )
+
+Preprocess C<$text> by using a number of substitutions for common abbreviations
+so that a speech synthesis engine can read the expanded versions.
+
+Returns a C<Str> with the preprocessed text.
+
+=cut
 fun preprocess_for_tts( $text ) {
 	$_ = $text;
 	$_ = unidecode($_); # FIXME this is a sledgehammer approach
