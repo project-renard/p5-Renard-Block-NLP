@@ -1,0 +1,56 @@
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Renard::Incunabula::Language::EN - Natural language processing for English
+
+=head1 VERSION
+
+version 0.001
+
+=head1 FUNCTIONS
+
+=head2 apply_sentence_offsets_to_blocks
+
+  fun apply_sentence_offsets_to_blocks( (InstanceOf['String::Tagged']) $text )
+
+Retrieves the sentence offsets for each part of the C<$text> string that has
+been tagged as a C<block> and apply a C<sentence> tag to each sentence.
+
+=head2 _get_offsets
+
+  fun _get_offsets( $text )
+
+This uses L<Lingua::EN::Sentence> internally to determine the location
+of each sentence.
+
+Returns an ArrayRef of ArrayRefs where the first item is the starting index and
+the second is the ending index of each sentence in C<$text>.
+
+=head2 preprocess_for_tts
+
+  fun preprocess_for_tts( $text )
+
+Preprocess C<$text> by using a number of substitutions for common abbreviations
+so that a speech synthesis engine can read the expanded versions.
+
+Returns a C<Str> with the preprocessed text.
+
+=head1 SEE ALSO
+
+L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-Incunabula-Language-EN/>
+
+=head1 AUTHOR
+
+Project Renard
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2017 by Project Renard.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
