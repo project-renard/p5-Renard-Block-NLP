@@ -3,22 +3,23 @@
 use Test::Most;
 
 use lib 't/lib';
-use Renard::Incunabula::Devel::TestHelper;
-
 use Renard::Incunabula::Common::Setup;
-use Renard::Incunabula::Format::PDF::Document;
+
+use Renard::Incunabula::Devel::TestHelper;
 use Renard::Incunabula::Language::EN;
-use Function::Parameters;
 
-my $pdf_ref_path = try {
-	Renard::Incunabula::Devel::TestHelper->test_data_directory->child(qw(PDF Adobe pdf_reference_1-7.pdf));
-} catch {
-	plan skip_all => "$_";
-};
+use List::AllUtils qw(reduce);
+use Test::Needs;
 
-plan tests => 1;
+plan tests => 2;
 
-subtest "Split sentences" => sub {
+subtest "Split sentences in PDF" => sub {
+	test_needs 'Renard::Incunabula::Format::PDF::Document';
+	my $pdf_ref_path = try {
+		Renard::Incunabula::Devel::TestHelper->test_data_directory->child(qw(PDF Adobe pdf_reference_1-7.pdf));
+	} catch {
+		plan skip_all => "$_";
+	};
 	my $pdf_doc = Renard::Incunabula::Format::PDF::Document->new(
 		filename => $pdf_ref_path
 	);
@@ -32,7 +33,7 @@ subtest "Split sentences" => sub {
 		sub {
 			my ( $substring, %tags ) = @_;
 			if( defined $tags{sentence} ) {
-				note "$substring\n=-=";
+				#note "$substring\n=-=";
 				push @sentences, $substring;
 			}
 		},
@@ -49,4 +50,32 @@ subtest "Split sentences" => sub {
 			$sentence_with_dot,
 		),
 		'A block is considered its own sentence';
+};
+
+subtest "Get offsets" => sub {
+	my $last_repeat = 3;
+	my $repeat_s = qq|Help me with this repeat.|;
+	my @sentences = (
+		qq|This is a sentence.|,
+		qq|(This is a another.|,
+		qq|These are in parentheses.)|,
+		$repeat_s,
+		qq|Tell me, Mr. Anderson, what good is a phone call if you're unable to speak?|,
+		qq|A sentence with too   many    spaces   that    should    be   cleaned.|,
+		($repeat_s)x($last_repeat),
+	);
+
+	my $txt = join " ", @sentences;
+
+	my $offsets = Renard::Incunabula::Language::EN::_get_offsets($txt);
+
+	is scalar @$offsets, scalar @sentences, 'Right number of sentences';
+	ok ! eq_deeply( $offsets->[-$last_repeat], $offsets->[-$last_repeat+1] ),
+		"Check that repeated sentences have different offsets";
+	ok defined(reduce { defined $a && $a->[1] < $b->[0] ? $b : undef  } @$offsets),
+		'All sorted offsets such that the end of the previous is before the start of the next';
+
+	my @got_sentences = map { substr $txt, $_->[0], $_->[1] - $_->[0] } @$offsets;
+
+	is_deeply \@got_sentences, \@sentences, 'Same sentences';
 };
