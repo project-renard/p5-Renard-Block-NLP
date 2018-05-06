@@ -65,9 +65,8 @@ fun _get_offsets( $text ) {
 		#
 		# This makes sure that repeated sentences have
 		# different offsets.
-		$str =~ m/$s_re/g;
-		push @$offsets, [ $-[0], $+[0] ];
-
+		$str =~ m/\G(?:.*?)($s_re)/g;
+		push @$offsets, [ $-[1], $+[1] ];
 	}
 
 	$offsets;
