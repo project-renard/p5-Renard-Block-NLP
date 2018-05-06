@@ -33,7 +33,7 @@ subtest "Split sentences in PDF" => sub {
 		sub {
 			my ( $substring, %tags ) = @_;
 			if( defined $tags{sentence} ) {
-				note "$substring\n=-=";
+				#note "$substring\n=-=";
 				push @sentences, $substring;
 			}
 		},
