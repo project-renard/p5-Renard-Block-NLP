@@ -18,7 +18,7 @@ fun apply_sentence_offsets_to_blocks( (InstanceOf['String::Tagged']) $text ) {
 	$text->iter_extents_nooverlap(
 		sub {
 			my ( $extent, %tags ) = @_;
-			my $offsets = _get_offsets( $extent->substr );
+			my $offsets = _get_offsets( $extent->substr->str );
 			# NOTE Offsets need to be sorted because it appears that they might not
 			# be in order.  Not sure what that means or if that is a bug.
 			$offsets = [ sort { $a->[0] <=> $b->[0] } @$offsets ];
@@ -53,7 +53,7 @@ fun _get_offsets( $text ) {
 	my $sentences = get_sentences($text);
 
 	my $offsets = [];
-	my $str = $text->str;
+	my $str = $text;
 	for my $s (@$sentences) {
 		my $s_re = $s =~ s/\s+/\\s+/gr;
 		$str =~ m/$s_re/g;
