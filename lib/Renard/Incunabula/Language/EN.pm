@@ -59,6 +59,12 @@ fun _get_offsets( $text ) {
 		# spaces.  This is due to Lingua::EN::Sentence
 		# having the `clean_sentences()` step.
 		my $s_re = quotemeta($s) =~ s/(\\\s)+/\\s+/gr;
+
+		# We use the 'g' option here because it keeps
+		# track of the previous regex position.
+		#
+		# This makes sure that repeated sentences have
+		# different offsets.
 		$str =~ m/$s_re/g;
 		push @$offsets, [ $-[0], $+[0] ];
 

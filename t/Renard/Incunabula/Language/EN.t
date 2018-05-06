@@ -52,12 +52,16 @@ subtest "Split sentences in PDF" => sub {
 };
 
 subtest "Get offsets" => sub {
+	my $last_repeat = 3;
+	my $repeat_s = qq|Help me with this repeat.|;
 	my @sentences = (
 		qq|This is a sentence.|,
 		qq|(This is a another.|,
 		qq|These are in parentheses.)|,
+		$repeat_s,
 		qq|Tell me, Mr. Anderson, what good is a phone call if you're unable to speak?|,
 		qq|A sentence with too   many    spaces   that    should    be   cleaned.|,
+		($repeat_s)x($last_repeat),
 	);
 
 	my $txt = join " ", @sentences;
@@ -65,6 +69,11 @@ subtest "Get offsets" => sub {
 	my $offsets = Renard::Incunabula::Language::EN::_get_offsets($txt);
 
 	is scalar @$offsets, scalar @sentences, 'Right number of sentences';
+	ok ! eq_deeply( $offsets->[-$last_repeat], $offsets->[-$last_repeat+1] ),
+		"Check that repeated sentences have different offsets";
+	ok defined(reduce { defined $a && $a->[1] < $b->[0] ? $b : undef  } @$offsets),
+		'All sorted offsets such that the end of the previous is before the start of the next';
+
 	my @got_sentences = map { substr $txt, $_->[0], $_->[1] - $_->[0] } @$offsets;
 
 	is_deeply \@got_sentences, \@sentences, 'Same sentences';
