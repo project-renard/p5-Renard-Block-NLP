@@ -55,7 +55,10 @@ fun _get_offsets( $text ) {
 	my $offsets = [];
 	my $str = $text;
 	for my $s (@$sentences) {
-		my $s_re = $s =~ s/\s+/\\s+/gr;
+		# Make the search insensitive to internal
+		# spaces.  This is due to Lingua::EN::Sentence
+		# having the `clean_sentences()` step.
+		my $s_re = quotemeta($s) =~ s/(\\\s)+/\\s+/gr;
 		$str =~ m/$s_re/g;
 		push @$offsets, [ $-[0], $+[0] ];
 

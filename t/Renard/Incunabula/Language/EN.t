@@ -16,9 +16,9 @@ my $pdf_ref_path = try {
 	plan skip_all => "$_";
 };
 
-plan tests => 1;
+plan tests => 2;
 
-subtest "Split sentences" => sub {
+subtest "Split sentences in PDF" => sub {
 	my $pdf_doc = Renard::Incunabula::Format::PDF::Document->new(
 		filename => $pdf_ref_path
 	);
@@ -49,4 +49,23 @@ subtest "Split sentences" => sub {
 			$sentence_with_dot,
 		),
 		'A block is considered its own sentence';
+};
+
+subtest "Get offsets" => sub {
+	my @sentences = (
+		qq|This is a sentence.|,
+		qq|(This is a another.|,
+		qq|These are in parentheses.)|,
+		qq|Tell me, Mr. Anderson, what good is a phone call if you're unable to speak?|,
+		qq|A sentence with too   many    spaces   that    should    be   cleaned.|,
+	);
+
+	my $txt = join " ", @sentences;
+
+	my $offsets = Renard::Incunabula::Language::EN::_get_offsets($txt);
+
+	is scalar @$offsets, scalar @sentences, 'Right number of sentences';
+	my @got_sentences = map { substr $txt, $_->[0], $_->[1] - $_->[0] } @$offsets;
+
+	is_deeply \@got_sentences, \@sentences, 'Same sentences';
 };
