@@ -5,7 +5,7 @@ use Test::Most;
 use lib 't/lib';
 use Renard::Incunabula::Common::Setup;
 
-use Renard::Incunabula::Devel::TestHelper;
+use Renard::Incunabula::Format::PDF::Devel::TestHelper;
 use Renard::Incunabula::Language::EN;
 
 use List::AllUtils qw(reduce);
@@ -16,13 +16,11 @@ plan tests => 2;
 subtest "Split sentences in PDF" => sub {
 	test_needs 'Renard::Incunabula::Format::PDF::Document';
 	my $pdf_ref_path = try {
-		Renard::Incunabula::Devel::TestHelper->test_data_directory->child(qw(PDF Adobe pdf_reference_1-7.pdf));
+		Renard::Incunabula::Format::PDF::Devel::TestHelper->pdf_reference_document_path;
 	} catch {
 		plan skip_all => "$_";
 	};
-	my $pdf_doc = Renard::Incunabula::Format::PDF::Document->new(
-		filename => $pdf_ref_path
-	);
+	my $pdf_doc = Renard::Incunabula::Format::PDF::Devel::TestHelper->pdf_reference_document_object;
 
 	my $tagged = $pdf_doc->get_textual_page( 23 );
 
