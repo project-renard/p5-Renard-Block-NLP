@@ -1,5 +1,5 @@
 use Renard::Incunabula::Common::Setup;
-package Renard::Incunabula::Language::EN;
+package Renard::Incunabula::Block::NLP;
 # ABSTRACT: Natural language processing for English
 
 use Renard::Incunabula::Common::Types qw(InstanceOf);
@@ -101,4 +101,4 @@ __END__
 
 =head1 SEE ALSO
 
-L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-Incunabula-Language-EN/>
+L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-Incunabula-Block-NLP/>
