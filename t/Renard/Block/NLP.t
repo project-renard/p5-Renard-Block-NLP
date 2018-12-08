@@ -5,8 +5,8 @@ use Test::Most;
 use lib 't/lib';
 use Renard::Incunabula::Common::Setup;
 
-use Renard::Incunabula::Block::Format::PDF::Devel::TestHelper;
-use Renard::Incunabula::Block::NLP;
+use Renard::Block::Format::PDF::Devel::TestHelper;
+use Renard::Block::NLP;
 
 use List::AllUtils qw(reduce);
 use Test::Needs;
@@ -14,17 +14,17 @@ use Test::Needs;
 plan tests => 2;
 
 subtest "Split sentences in PDF" => sub {
-	test_needs 'Renard::Incunabula::Block::Format::PDF::Document';
+	test_needs 'Renard::Block::Format::PDF::Document';
 	my $pdf_ref_path = try {
-		Renard::Incunabula::Block::Format::PDF::Devel::TestHelper->pdf_reference_document_path;
+		Renard::Block::Format::PDF::Devel::TestHelper->pdf_reference_document_path;
 	} catch {
 		plan skip_all => "$_";
 	};
-	my $pdf_doc = Renard::Incunabula::Block::Format::PDF::Devel::TestHelper->pdf_reference_document_object;
+	my $pdf_doc = Renard::Block::Format::PDF::Devel::TestHelper->pdf_reference_document_object;
 
 	my $tagged = $pdf_doc->get_textual_page( 23 );
 
-	Renard::Incunabula::Block::NLP::apply_sentence_offsets_to_blocks( $tagged );
+	Renard::Block::NLP::apply_sentence_offsets_to_blocks( $tagged );
 	my @sentences = ();
 
 	$tagged->iter_substr_nooverlap(
@@ -65,7 +65,7 @@ subtest "Get offsets" => sub {
 
 	my $txt = join " ", @sentences;
 
-	my $offsets = Renard::Incunabula::Block::NLP::_get_offsets($txt);
+	my $offsets = Renard::Block::NLP::_get_offsets($txt);
 
 	is scalar @$offsets, scalar @sentences, 'Right number of sentences';
 	ok ! eq_deeply( $offsets->[-$last_repeat], $offsets->[-$last_repeat+1] ),

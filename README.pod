@@ -4,7 +4,7 @@
 
 =head1 NAME
 
-Renard::Incunabula::Language::EN - Natural language processing for English
+Renard::Block::NLP - Natural language processing for English
 
 =head1 VERSION
 
@@ -40,7 +40,7 @@ Returns a C<Str> with the preprocessed text.
 
 =head1 SEE ALSO
 
-L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-Incunabula-Language-EN/>
+L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-Block-NLP/>
 
 =head1 AUTHOR
 
